@@ -65,6 +65,7 @@ class UpdateCore:
             self.status = Status.IDLE
             self._emit("status", self.status.value)
 
+    @staticmethod
     def _apply_severity_rules(updates: list[Update], rules: list[SeverityRule]) -> list[Update]:
         import fnmatch
         out = []
@@ -88,7 +89,7 @@ class UpdateCore:
                 log.exception("plugin %s failed during check", p.name)
         # 按重要性降序、名称升序
         if self.config.severity.rules:
-            all_updates = apply_severity_rules(all_updates, self.config.severity.rules)
+            all_updates = self._apply_severity_rules(all_updates, self.config.severity.rules)
         all_updates.sort(key=lambda u: (-int(u.severity), u.name))
         return all_updates
 
