@@ -97,7 +97,7 @@ class UpdateCore:
     async def install(self, ids: list[str]) -> bool:
         if self.status != Status.IDLE:
             return False
-        if cfg.install.refresh_before_install:
+        if self.config.install.refresh_before_install:
             await check(True)
         self.status = Status.INSTALLING
         self._emit("status", self.status.value)
