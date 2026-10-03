@@ -52,9 +52,9 @@ install_files() {
     install -Dm644 "$DATA_DIR/${BUS_NAME}.policy" \
         "$POLKITDIR/${BUS_NAME}.policy"
 
-    if [[ -f "$DATA_DIR/49-${BUS_NAME}.rules" ]]; then
-        install -Dm644 "$DATA_DIR/49-${BUS_NAME}.rules" \
-            "$POLKITRULESDIR/49-${BUS_NAME}.rules"
+    if [[ -f "$DATA_DIR/${BUS_NAME}.rules" ]]; then
+        install -Dm644 "$DATA_DIR/${BUS_NAME}.rules" \
+            "$POLKITRULESDIR/${BUS_NAME}.rules"
     fi
 
     echo ">> Installing default config (if absent)"
