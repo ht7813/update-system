@@ -75,14 +75,14 @@ class UpdateApp(Gtk.Application):
         GLib.idle_add(self._maybe_notify, updates)
 
     def _maybe_notify(self, updates: list):
+        current = {u[0] for u in updates}
+        if not current:
+            self._notified_snapshot = set()
+            return
         if not self.config.notify.enabled:
             return
         min_sev = self.config.severity_value(self.config.notify.min_severity)
         if max(u[4] for u in updates) < min_sev:
-            return
-        current = {u[0] for u in updates}
-        if not current:
-            self._notified_snapshot = set()
             return
         if current - self._notified_snapshot:
             notify.notify_updates(updates, on_click=self._focus_window)

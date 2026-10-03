@@ -98,7 +98,7 @@ class UpdateCore:
         if self.status != Status.IDLE:
             return False
         if self.config.install.refresh_before_install:
-            await check(True)
+            await self.check(True)
         self.status = Status.INSTALLING
         self._emit("status", self.status.value)
         loop = asyncio.get_running_loop()
