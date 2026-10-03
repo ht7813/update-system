@@ -1,3 +1,14 @@
+// /usr/share/polkit-1/rules.d/com.github.ht7813.UpdateManager.rules
+//
+// 授权模型：
+//   - 管理员（wheel 组）在本地活动会话：AUTH_SELF_KEEP
+//   - 普通用户在本地活动会话：AUTH_ADMIN_KEEP
+//   - 非活动会话或远程会话：AUTH_ADMIN
+//   - install-security 对管理员放宽到 AUTH_SELF_KEEP（同上），
+//     对普通用户保持 AUTH_ADMIN_KEEP
+//
+// 注意：本规则不返回 YES，任何情况下都需要认证。
+
 polkit.addRule(function(action, subject) {
 
     // 只处理我们自己的 action
@@ -5,30 +16,30 @@ polkit.addRule(function(action, subject) {
         return polkit.Result.NOT_HANDLED;
     }
 
-    // 场景1：wheel 组用户在活动会话中安装普通更新 -> 免密
-    if (action.id === "com.github.ht7813.UpdateManager.install" &&
-        subject.isInGroup("wheel") &&
-        subject.active &&
-        subject.local) {
-        return polkit.Result.YES;
-    }
+    var isAdmin = subject.isInGroup("wheel");
+    var isLocalActive = subject.local && subject.active;
 
-    // 场景2：任何活动会话用户安装"安全更新" -> 需自身密码即可
-    if (action.id === "com.github.ht7813.UpdateManager.install-security" &&
-        subject.active && subject.local) {
-        return polkit.Result.AUTH_SELF_KEEP;
-    }
-
-    // 场景3：远程会话一律要求管理员认证
-    if (!subject.local) {
+    // ---- 远程或非活动会话：一律要求管理员认证 ----
+    if (!isLocalActive) {
         return polkit.Result.AUTH_ADMIN;
     }
 
-    // 场景4：非 wheel 组用户不可安装普通更新
-    if (action.id === "com.github.ht7813.UpdateManager.install" &&
-        !subject.isInGroup("wheel")) {
-        return polkit.Result.NO;
+    // ---- 本地活动会话 ----
+    // 管理员装普通更新：输自己的密码
+    if (action.id === "com.github.ht7813.UpdateManager.install") {
+        return isAdmin
+        ? polkit.Result.AUTH_SELF_KEEP
+        : polkit.Result.AUTH_ADMIN_KEEP;
     }
 
+    // 安全更新：管理员 AUTH_SELF_KEEP，普通用户 AUTH_ADMIN_KEEP
+    // 这里和普通更新一致，保留分支是为了将来能单独放宽
+    if (action.id === "com.github.ht7813.UpdateManager.install-security") {
+        return isAdmin
+        ? polkit.Result.AUTH_SELF_KEEP
+        : polkit.Result.AUTH_ADMIN_KEEP;
+    }
+
+    // 其他 action（check / refresh）交给 .policy 文件的默认值处理
     return polkit.Result.NOT_HANDLED;
 });
