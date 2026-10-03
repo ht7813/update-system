@@ -1,0 +1,13 @@
+[Unit]
+Description=Check for package updates
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# 用 busctl 调 D-Bus，避免起 Python 进程
+ExecStart=/usr/bin/busctl --system call \
+    com.github.ht7813.UpdateManager \
+    /com/github/ht7813/UpdateManager \
+    com.github.ht7813.UpdateManager \
+    CheckUpdatesQuiet

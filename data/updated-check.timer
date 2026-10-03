@@ -1,0 +1,15 @@
+[Unit]
+Description=Periodically check for package updates
+Requires=updated.service
+
+[Timer]
+# 开机后 15 分钟首次检查，之后每 6 小时一次
+OnBootSec=15min
+OnUnitActiveSec=6h
+# 如果错过（比如休眠），启动后补一次
+Persistent=true
+# 随机延迟 0-30 分钟，避免多台机器同时打仓库
+RandomizedDelaySec=30min
+
+[Install]
+WantedBy=timers.target

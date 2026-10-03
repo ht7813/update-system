@@ -1,0 +1,34 @@
+polkit.addRule(function(action, subject) {
+
+    // 只处理我们自己的 action
+    if (action.id.indexOf("com.github.ht7813.UpdateManager.") !== 0) {
+        return polkit.Result.NOT_HANDLED;
+    }
+
+    // 场景1：wheel 组用户在活动会话中安装普通更新 -> 免密
+    if (action.id === "com.github.ht7813.UpdateManager.install" &&
+        subject.isInGroup("wheel") &&
+        subject.active &&
+        subject.local) {
+        return polkit.Result.YES;
+    }
+
+    // 场景2：任何活动会话用户安装"安全更新" -> 需自身密码即可
+    if (action.id === "com.github.ht7813.UpdateManager.install-security" &&
+        subject.active && subject.local) {
+        return polkit.Result.AUTH_SELF_KEEP;
+    }
+
+    // 场景3：远程会话一律要求管理员认证
+    if (!subject.local) {
+        return polkit.Result.AUTH_ADMIN;
+    }
+
+    // 场景4：非 wheel 组用户不可安装普通更新
+    if (action.id === "com.github.ht7813.UpdateManager.install" &&
+        !subject.isInGroup("wheel")) {
+        return polkit.Result.NO;
+    }
+
+    return polkit.Result.NOT_HANDLED;
+});

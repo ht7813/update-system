@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "updated"
+license = "MIT"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "dbus-next>=0.2.3",
+    "pyalpm>=0.10",
+]
+
+[project.optional-dependencies]
+gui = [
+    "PyGObject>=3.46",
+]
+
+[project.scripts]
+updated = "updated.__main__:main"
+upmctl = "upmctl.__main__:main"
+upmgui = "upmgui.__main__:main"
+
+[project.entry-points."updated.plugins"]
+pacman = "updated_pacman:PacmanPlugin"
+
+[tool.setuptools.packages.find]
+where = ["src"]

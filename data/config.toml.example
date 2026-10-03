@@ -1,0 +1,44 @@
+[daemon]
+# 允许的严重性阈值：install-all 默认从这一级开始装
+default_severity = "normal"
+# 日志级别：debug / info / warning / error
+log_level = "info"
+
+[notify]
+# 是否在检测到新更新时弹通知（GUI 侧读取）
+enabled = true
+# 出现这些严重性时才通知：low / normal / important / security / critical
+min_severity = "normal"
+
+[install]
+# 安装前是否强制刷新仓库数据库
+refresh_before_install = true
+
+[plugins]
+# 启用哪些插件；缺省表示全部启用
+enabled = ["pacman"]
+
+[plugins.pacman]
+config_path = "/etc/pacman.conf"
+# 额外的重要包前缀（叠加在内置列表上）
+important_prefixes = []
+# 额外的安全关键词
+security_keywords = ["advisory", "asa"]
+
+[severity]
+# 严重性分级规则：按包名匹配，先匹配先赢
+[[severity.rules]]
+pattern = "linux*"
+level = "critical"
+
+[[severity.rules]]
+pattern = "glibc"
+level = "critical"
+
+[[severity.rules]]
+pattern = "openssl*"
+level = "security"
+
+[[severity.rules]]
+pattern = "*-docs"
+level = "low"

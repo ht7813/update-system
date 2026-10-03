@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+
+<policyconfig>
+
+  <vendor>ht7813</vendor>
+  <vendor_url>https://ht7813.github.io</vendor_url>
+
+  <!-- 1. 刷新包数据库（低风险，允许活动会话用户直接操作） -->
+  <action id="com.github.ht7813.UpdateManager.refresh">
+    <description>Refresh package databases</description>
+    <message>Authentication is required to refresh package databases</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+
+  <!-- 2. 检查更新（只读操作，活动会话允许） -->
+  <action id="com.github.ht7813.UpdateManager.check">
+    <description>Check for available updates</description>
+    <message>Authentication is required to check for updates</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+
+  <!-- 3. 安装普通更新（需要认证，允许交互） -->
+  <action id="com.github.ht7813.UpdateManager.install">
+    <description>Install package updates</description>
+    <message>Authentication is required to install package updates</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+
+  <!-- 4. 安装安全更新（可考虑放宽为 auth_self_keep） -->
+  <action id="com.github.ht7813.UpdateManager.install-security">
+    <description>Install security updates</description>
+    <message>Authentication is required to install security updates</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+
+  <!-- 5. 修改 daemon 配置（高危，仅管理员） -->
+  <action id="com.github.ht7813.UpdateManager.configure">
+    <description>Configure the update manager</description>
+    <message>Authentication is required to change update manager settings</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+  </action>
+
+</policyconfig>

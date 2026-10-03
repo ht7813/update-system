@@ -1,0 +1,15 @@
+[Unit]
+Description=Package Update Manager Daemon
+After=network-online.target dbus-daemon.service
+Wants=network-online.target
+
+[Service]
+Type=dbus
+BusName=com.github.ht7813.UpdateManager
+ExecStart=/usr/bin/updated
+User=root
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
