@@ -144,8 +144,7 @@ class PacmanPlugin(PackageManagerPlugin):
             source=self.name,
         )
 
-    @staticmethod
-    def _classify(name: str, desc: str) -> Severity:
+    def _classify(self, name: str, desc: str) -> Severity:
         important = _IMPORTANT_PREFIXES + tuple(self._extra_important)
         security = _SECURITY_HINTS + tuple(self._extra_security)
         lname = name.lower()
