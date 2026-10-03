@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 
 from .plugin.base import PackageManagerPlugin, Update, ProgressCallback
-from .config import Config
+from .config import Config, SEVERITY_NAMES
 
 log = logging.getLogger(__name__)
 

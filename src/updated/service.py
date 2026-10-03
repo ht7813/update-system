@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from dbus_next.service import ServiceInterface, method, signal
 from dbus_next.message import Message
+import logging
 
 from .core import UpdateCore
 from .polkit import check_auth
 
+log = logging.getLogger(__name__)
 
 class UpdateManagerInterface(ServiceInterface):
     def __init__(self, core: UpdateCore):
