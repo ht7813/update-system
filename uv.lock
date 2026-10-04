@@ -57,7 +57,7 @@ sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/a3/9b/47
 
 [[package]]
 name = "updated"
-version = "0.1.6"
+version = "0.1.7"
 source = { editable = "." }
 dependencies = [
     { name = "dbus-next" },
