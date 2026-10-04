@@ -5,8 +5,9 @@ import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
+from dataclasses import replace
 
-from .plugin.base import PackageManagerPlugin, Update, ProgressCallback
+from .plugin.base import PackageManagerPlugin, Update, ProgressCallback, Severity
 from .config import Config, SEVERITY_NAMES
 
 log = logging.getLogger(__name__)
