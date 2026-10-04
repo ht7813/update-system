@@ -19,13 +19,11 @@ SEV_CRITICAL = 4
 ICON_IMPORTANT = "software-update-urgent"
 ICON_NORMAL = "software-update-available"
 
-
 def init(app_name: str = "Update Manager") -> None:
     if not Notify.is_initted():
         Notify.init(app_name)
 
-
-def notify_updates(updates: list, on_click=None) -> None:
+def notify_updates(updates: list, on_click=None, timeout: int = 10000) -> None:
     """弹一条汇总通知。updates 为 D-Bus 返回的 tuple 列表。"""
     if not updates:
         return
@@ -38,7 +36,7 @@ def notify_updates(updates: list, on_click=None) -> None:
 
     n = Notify.Notification.new(title, body, ICON_IMPORTANT if important else ICON_NORMAL)
     n.set_urgency(Notify.Urgency.CRITICAL if important else Notify.Urgency.NORMAL)
-    n.set_timeout(10000)  # 毫秒
+    n.set_timeout(timeout)  # 毫秒
 
     if on_click:
         # 点击通知触发回调

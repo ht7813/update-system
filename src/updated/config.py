@@ -29,6 +29,7 @@ class DaemonConfig:
 class NotifyConfig:
     enabled: bool = True
     min_severity: str = "normal"
+    timeout: int = 10000
 
 
 @dataclass
@@ -115,6 +116,7 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
         cfg.notify = NotifyConfig(
             enabled=_get(sec, "enabled", True),
             min_severity=_get(sec, "min_severity", "normal"),
+            timeout=_get(sec, "timeout", 10000),
         )
 
     # [install]

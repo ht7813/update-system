@@ -9,6 +9,7 @@ log_level = "info"
 enabled = true
 # 出现这些严重性时才通知：low / normal / important / security / critical
 min_severity = "normal"
+timeout = 10000
 
 [install]
 # 安装前是否强制刷新仓库数据库

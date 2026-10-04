@@ -85,7 +85,7 @@ class UpdateApp(Gtk.Application):
         if max(u[4] for u in updates) < min_sev:
             return
         if current - self._notified_snapshot:
-            notify.notify_updates(updates, on_click=self._focus_window)
+            notify.notify_updates(updates, on_click=self._focus_window, timeout=self.config.notify.timeout)
         self._notified_snapshot = current
 
     def _focus_window(self):
