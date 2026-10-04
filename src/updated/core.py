@@ -29,14 +29,29 @@ class UpdateCore:
                                             thread_name_prefix="pkgmgr")
         self._listeners: list = []   # 状态/更新变化回调
         self.config = config
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._loop_thread_id: int | None = None
         log.setLevel(config.daemon.log_level.upper())
 
     # ---- 事件订阅 ----
     def on_change(self, cb):
         self._listeners.append(cb)
 
-    def _emit(self, kind: str, payload=None):
-        for cb in self._listeners:
+    def bind_loop(self, loop: asyncio.AbstractEventLoop):
+        self._loop = loop
+        self._loop_thread_id = threading.get_ident()
+
+    def _emit(self, kind, payload=None):
+        if self._loop is None:
+            return self._emit_sync(kind, payload)
+        # 判断是否在 loop 线程
+        if threading.get_ident() == self._loop_thread_id:
+            self._emit_sync(kind, payload)
+        else:
+            self._loop.call_soon_threadsafe(self._emit_sync, kind, payload)
+
+    def _emit_sync(self, kind, payload=None):
+        for cb in list(self._listeners):   # list() 快照，避免迭代时被改
             try:
                 cb(kind, payload)
             except Exception:

@@ -26,6 +26,7 @@ async def run() -> None:
              len(plugins), [p.name for p in plugins])
 
     core = UpdateCore(plugins, cfg)
+    core.bind_loop(asyncio.get_running_loop())
     iface = UpdateManagerInterface(core)
 
     bus = await MessageBus(bus_type=BusType.SYSTEM).connect()
