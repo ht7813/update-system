@@ -55,6 +55,11 @@ class UpdateApp(Gtk.Application):
         asyncio.set_event_loop(self.loop)
         self.loop.run_until_complete(self._async_main())
 
+    def _deliver_updates(self, updates):
+        if self.window is not None:
+            self.window.set_updates(updates)
+        self._maybe_notify(updates)
+
     async def _async_main(self):
         log.info("asyncio worker: starting")
         try:
@@ -66,7 +71,7 @@ class UpdateApp(Gtk.Application):
         self.client.watch_updates(self._on_updates_from_daemon)
         try:
             updates = await self.client.get_updates()
-            GLib.idle_add(self.window.set_updates, updates)
+            GLib.idle_add(self._deliver_updates, updates)
         except Exception:
             log.exception("asyncio worker: get_updates failed")
 
