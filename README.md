@@ -1,5 +1,43 @@
 # updated
 
+> ## ⚠️ Not production-ready
+>
+> This is a personal experiment, not a production-grade tool.
+> Read the limitations below before using it.
+>
+> **Known risks**
+>
+> - **Runs as root and drives `libalpm` directly** to modify the
+>   system package database. Any bug can leave the package manager
+>   in a broken state, requiring manual repair or a full reinstall.
+> - **Not systematically tested.** No unit tests, no integration
+>   tests, no verification across machines or distributions.
+> - **Interruption can leave bad state.** If the daemon crashes, is
+>   killed by the OOM killer, or the machine loses power mid-install,
+>   `/var/lib/pacman` may be left inconsistent. Know your
+>   `pacman -Syu` recovery path before you start.
+> - **No undo.** If it installs the wrong thing or breaks something,
+>   rolling back is on you.
+>
+> **Do not use it for**
+>
+> - Production servers
+> - Machines you cannot afford to reinstall
+> - Any environment where you do not understand what `libalpm`,
+>   polkit, and D-Bus are doing
+>
+> **Who it is for**
+>
+> - Developers willing to test it in a VM or container
+> - People exploring “another frontend for pacman”
+> - Anyone who can read the code and fix bugs themselves
+>
+> If you need a reliable system update tool, use `pacman -Syu`,
+> `paru`, `yay`, or your distribution's update manager. All of them
+> are more trustworthy than this.
+
+## Overview
+
 A Windows Update–style package update manager for Linux, built around
 a D-Bus daemon, pluggable package-manager backends, and a GTK4 frontend.
 
