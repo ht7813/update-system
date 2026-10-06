@@ -81,11 +81,24 @@ class PacmanPlugin(PackageManagerPlugin):
     def _wire_callbacks(self, handle, progress: ProgressCallback) -> None:
         """把 pyalpm 的 libalpm 回调映射到插件的 progress(pkg_id, percent, phase)。"""
 
+        _last: dict[tuple[str, str], int] = {}
+
         def dlcb(filename, xfered, total):
             pct = int(xfered * 100 / total) if total else 0
+            key = (filename, "download")
+            prev = _last.get(key)
+            # 同一包同一动作，进度没变且不是 100% 就跳过
+            if prev is not None and pct == prev and pct < 100:
+                return
+            _last[key] = pct
             progress(filename, pct, "download")
 
         def progresscb(target, percent, _n, _i):
+            key = (target or "", "install")
+            prev = _last.get(key)
+            if prev is not None and percent == prev and percent < 100:
+                return
+            _last[key] = percent
             progress(target or "", percent, "install")
 
         def eventcb(event, *args):

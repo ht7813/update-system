@@ -119,8 +119,16 @@ class UpdateCore:
         self.status = Status.INSTALLING
         self._emit("status", self.status.value)
         loop = asyncio.get_running_loop()
+        _last_sent: dict[tuple[str, str], float] = {}
+        MIN_INTERVAL = 0.2
 
-        def progress(pkg_id: str, pct: int, phase: str):
+        def progress(pkg_id, pct, phase):
+            key = (pkg_id, phase)
+            now = time.monotonic()
+            last = _last_sent.get(key, 0)
+            if pct < 100 and now - last < MIN_INTERVAL:
+                return
+            _last_sent[key] = now
             self._emit("progress", (pkg_id, pct, phase))
 
         try:
