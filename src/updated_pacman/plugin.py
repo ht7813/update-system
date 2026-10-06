@@ -111,25 +111,26 @@ class PacmanPlugin(PackageManagerPlugin):
 
         t = handle.init_transaction()
         try:
-            if names >= all_updates and all_updates:
-                # 请求的就是全部更新 -> 直接系统升级，依赖闭包最完整
-                t.sysupgrade(False)
-            else:
-                for name in names:
-                    pkg = self._find_sync_pkg(handle, name)
-                    if pkg is not None:
-                        t.add_pkg(pkg)
+            try:
+                if names >= all_updates and all_updates:
+                    t.sysupgrade(False)
+                else:
+                    for name in names:
+                        pkg = self._find_sync_pkg(handle, name)
+                        if pkg is not None:
+                            t.add_pkg(pkg)
 
-            if not t.to_add and not t.to_remove:
-                t.release()
+                if not t.to_add and not t.to_remove:
+                    return True
+                t.prepare()
+                t.commit()
                 return True
-            t.prepare()
-            t.commit()
-        except pyalpm.error:
-            t.release()
-            return False
-        t.release()
-        return True
+            except pyalpm.error:
+                return False
+            finally:
+                t.release()
+        finally:
+            self.close()
 
     # ---- 内部 ----
     def _make_update(self, pkg, lpkg) -> Update:
