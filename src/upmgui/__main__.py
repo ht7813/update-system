@@ -69,6 +69,7 @@ class UpdateApp(Gtk.Application):
             log.exception("asyncio worker: connect failed")
             return
         self.client.watch_updates(self._on_updates_from_daemon)
+        self.client.watch_progress(self._on_progress_from_daemon)
         try:
             updates = await self.client.get_updates()
             GLib.idle_add(self._deliver_updates, updates)
@@ -78,6 +79,9 @@ class UpdateApp(Gtk.Application):
     def _on_updates_from_daemon(self, updates: list):
         GLib.idle_add(self.window.set_updates, updates)
         GLib.idle_add(self._maybe_notify, updates)
+
+    def _on_progress_from_daemon(self, package: str, progress: int, action: str):
+        GLib.idle_add(self.window.set_progress, package, progress, action)
 
     def _maybe_notify(self, updates: list):
         current = {u[0] for u in updates}

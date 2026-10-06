@@ -20,6 +20,7 @@ class UpdateClient:
         self.iface = None
         self._ready = asyncio.Event()
         self._on_updates: Callable[[list], None] | None = None
+        self._on_progress: Callable[[str, int, str], None] | None = None
 
     async def connect(self):
         self.bus = await MessageBus(bus_type=BusType.SYSTEM).connect()
@@ -57,3 +58,13 @@ class UpdateClient:
         log.info("received %d updates", len(updates))
         if self._on_updates:
             self._on_updates(updates)
+
+    def watch_progress(self, callback: Callable[[str, int, str], None]):
+        """注册 UpdatesChanged 信号回调。"""
+        self._on_progress = callback
+        self.iface.on_progress(self._handle_progress)
+
+    def _handle_progress(self, package: str, progress: int, action: str):
+        log.info("progress: package %s, action %s: %d", package, action, progress)
+        if self._on_progress:
+            self._on_progress(package, progress, action)

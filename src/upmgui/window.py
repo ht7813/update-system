@@ -138,6 +138,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.status_label.set_text(f"共 {len(updates)} 项更新")
 
+    def set_progress(self, package: str, progress: int, action: str):
+        self.status_label.set_text(f"正在为 {package} 进行 {action} 操作，进度：{progress}")
+
     def _make_row(self, pkg_id, name, cur, new, sev, src) -> Gtk.ListBoxRow:
         row = Gtk.ListBoxRow()
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
